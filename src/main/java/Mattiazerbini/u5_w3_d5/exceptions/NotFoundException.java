@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(UUID message) {
-        super(message);
+        super(String.valueOf(message));
     }
 }

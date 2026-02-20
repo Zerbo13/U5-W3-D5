@@ -16,6 +16,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,5 +36,34 @@ public class EventoService {
         Evento eventoSalvato = this.eventoRepository.save(newViaggio);
         log.info("L'evento "+newViaggio.getLuogo()+" " +newViaggio.getData()+ " è stato inserito con successo!");
         return eventoSalvato;
+    }
+
+    public List<Evento> findAll() {
+        return this.eventoRepository.findAll();
+    }
+
+
+    public Evento findById(UUID idEvento) {
+        return this.eventoRepository.findById(idEvento)
+                .orElseThrow(() -> new NotFoundException(idEvento));
+    }
+
+    public Evento findByIdAndUpdate(UUID idEvento, EventoPayload payload) {
+
+        Evento found = this.findById(idEvento);
+        found.setTitolo(payload.getTitolo());
+        found.setDescrizione(payload.getDescrizione());
+        found.setData(payload.getData());
+        found.setLuogo(payload.getLuogo());
+        found.setPosti(payload.getPosti());
+
+        Evento eventoModificato = this.eventoRepository.save(found);
+        log.info("L'evento con id " + eventoModificato.getId() + " è stato modificato correttamente");
+        return eventoModificato;
+    }
+
+    public void findByIdAndDelete(UUID idEvento) {
+        Evento found = this.findById(idEvento);
+        this.eventoRepository.delete(found);
     }
 }

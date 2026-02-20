@@ -4,6 +4,7 @@ import Mattiazerbini.u5_w3_d5.entities.Evento;
 import Mattiazerbini.u5_w3_d5.entities.Prenotazione;
 import Mattiazerbini.u5_w3_d5.entities.Utente;
 import Mattiazerbini.u5_w3_d5.exceptions.ExceptionPrenotatione;
+import Mattiazerbini.u5_w3_d5.exceptions.NotFoundException;
 import Mattiazerbini.u5_w3_d5.payloads.PrenotazionePayload;
 import Mattiazerbini.u5_w3_d5.repositories.EventoRepository;
 import Mattiazerbini.u5_w3_d5.repositories.PrenotazioneRepository;
@@ -12,6 +13,9 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -44,5 +48,20 @@ public class PrenotazioneService {
         Prenotazione prenotazioneSalvata = this.prenotazioneRepository.save(prenotazione);
         log.info("Prenotazione con id " +prenotazioneSalvata.getId()+ " salvata con successo!" );
         return prenotazioneSalvata;
+    }
+
+    public List<Prenotazione> findAll() {
+        return this.prenotazioneRepository.findAll();
+    }
+
+
+    public Prenotazione findById(UUID idPrenotazione) {
+        return this.prenotazioneRepository.findById(idPrenotazione)
+                .orElseThrow(() -> new NotFoundException(idPrenotazione));
+    }
+
+    public void findByIdAndDelete(UUID idPrenotazione) {
+        Prenotazione found = this.findById(idPrenotazione);
+        this.prenotazioneRepository.delete(found);
     }
 }

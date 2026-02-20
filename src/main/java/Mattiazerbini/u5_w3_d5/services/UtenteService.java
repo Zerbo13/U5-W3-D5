@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,34 +39,36 @@ public class UtenteService {
         return utenteSalvato;
     }
 
-    public Utente findByIdAndUpdate(UUID idUtente, UtentePayload payload) {
-        // 1. Cerchiamo l'utente nel db
-        Utente found = this.findById(idUtente);
+    public List<Utente> findAll() {
+        return this.utenteRepository.findAll();
+    }
 
-        // 2. Validazione dati (esempio controllo se email è già in uso
+
+    public Utente findById(UUID idUtente) {
+        return this.utenteRepository.findById(idUtente)
+                .orElseThrow(() -> new NotFoundException(idUtente));
+    }
+
+    public Utente findByIdAndUpdate(UUID idUtente, UtentePayload payload) {
+
+        Utente found = this.findById(idUtente);
         if (!found.getEmail().equals(payload.getEmail())) this.utenteRepository.findByEmail(payload.getEmail()).ifPresent(user -> {
             try {
-                throw new BadRequestException("L'email " + user.getEmail() + " è già in uso!");
+                throw new BadRequestException("L'email inserita " + user.getEmail() + " è già in uso!");
             } catch (BadRequestException e) {
                 throw new RuntimeException(e);
             }
         });
-        // Il controllo su email già in uso lo faccio solo se l'utente sta modificando effettivamente la sua email
-
-        // 3. Modifico l'utente trovato
         found.setNome(payload.getNome());
         found.setCognome(payload.getCognome());
         found.setEmail(payload.getEmail());
         found.setPassword(payload.getPassword());
 
-        // 4. Salvo
-        Utente modifiedUser = this.utenteRepository.save(found);
+        Utente utenteModificato = this.utenteRepository.save(found);
 
-        // 5. Log
-        log.info("L'utente con id " + modifiedUser.getId() + " è stato modificato correttamente");
+        log.info("L'utente con id " + utenteModificato.getId() + " è stato modificato correttamente");
 
-        // 6. Ritorno l'utente modificato
-        return modifiedUser;
+        return utenteModificato;
     }
 
     public void findByIdAndDelete(UUID idUtente) {
@@ -78,8 +81,4 @@ public class UtenteService {
                 .orElseThrow(() -> new ValidationException("L'utente con email " + email + " non è stato trovato!"));
     }
 
-    public Utente findById(UUID idUtente) {
-        return this.utenteRepository.findById(idUtente)
-                .orElseThrow(() -> new NotFoundException(idUtente));
-    }
 }
