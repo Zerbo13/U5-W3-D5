@@ -33,7 +33,7 @@ public class UtenteService {
             throw new ValidationException("Questa mail" + payload.getEmail() + "è gia registrata");
         }
         Utente newUtente = new Utente(payload.getNome(), payload.getCognome(), payload.getData_nascita(),
-                payload.getEmail(), bcrypt.encode(payload.getPassword()));
+                payload.getEmail(), bcrypt.encode(payload.getPassword()), payload.getRuolo());
         Utente utenteSalvato = this.utenteRepository.save(newUtente);
         log.info("Il dipendente "+newUtente.getNome()+" " +newUtente.getCognome()+ " è stato inserito con successo!");
         return utenteSalvato;
@@ -63,6 +63,8 @@ public class UtenteService {
         found.setCognome(payload.getCognome());
         found.setEmail(payload.getEmail());
         found.setPassword(payload.getPassword());
+        found.setData_nascita(payload.getData_nascita());
+        found.setRuolo(payload.getRuolo());
 
         Utente utenteModificato = this.utenteRepository.save(found);
 

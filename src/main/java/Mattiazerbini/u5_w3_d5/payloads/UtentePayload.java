@@ -1,5 +1,6 @@
 package Mattiazerbini.u5_w3_d5.payloads;
 
+import Mattiazerbini.u5_w3_d5.entities.Ruolo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,12 +25,14 @@ public class UtentePayload {
     @Size(min = 3, message = "La password deve avere almeno 3 caratteri")
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{4,}$", message = "La password deve contenere una maiuscola, una minuscola ")
     private String password;
+    private Ruolo ruolo;
 
-    public UtentePayload(String nome, String cognome, LocalDate data_nascita, String email, String password) {
+    public UtentePayload(String nome, String cognome, LocalDate data_nascita, String email, String password, Ruolo ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.data_nascita = data_nascita;
         this.email = email;
         this.password = password;
+        this.ruolo = ruolo;
     }
 }

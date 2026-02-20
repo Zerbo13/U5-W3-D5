@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,8 +23,10 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JWTCheckerFilter jwtCheckerFilter) throws Exception {
 
         httpSecurity.formLogin(formLogin -> formLogin.disable());
         httpSecurity.csrf(csrf -> csrf.disable());
@@ -32,9 +35,10 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/eventi/**").permitAll()
                 .requestMatchers("/eventi/**").hasAuthority("ORGANIZZATORE_EVENTI")
-                .requestMatchers("/prenotazioni/**").hasAuthority("UTENTE")
+                .requestMatchers("/prenotazioni/**").permitAll()
                 .anyRequest().authenticated()
         );
+        httpSecurity.addFilterBefore(jwtCheckerFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
 
     }

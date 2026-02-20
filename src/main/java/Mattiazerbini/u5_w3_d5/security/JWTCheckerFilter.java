@@ -32,7 +32,13 @@ public class JWTCheckerFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException{
+        if (shouldNotFilter(request)){
+           filterChain.doFilter(request, response);
+           return;
+       }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer "))
@@ -53,6 +59,8 @@ public class JWTCheckerFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathMatcher().match("/auth/**", request.getServletPath());
+        AntPathMatcher matcher = new  AntPathMatcher();
+        return new AntPathMatcher().match("/auth/**", request.getServletPath())
+                || matcher.match("/prenotazioni/**", request.getServletPath());
        }
 }

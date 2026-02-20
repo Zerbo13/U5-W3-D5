@@ -36,22 +36,18 @@ public class Utente implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Ruolo ruolo;
 
-    public Utente(String nome, String cognome, LocalDate data_nascita, String email, String password) {
+    public Utente(String nome, String cognome, LocalDate data_nascita, String email, String password, Ruolo ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.data_nascita = data_nascita;
         this.email = email;
         this.password = password;
-        this.ruolo = Ruolo.UTENTE;
+        this.ruolo = ruolo;
    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Questo metodo deve restituire una collection di Authorities, cioè di RUOLI
-        // SimpleGrantedAuthority è una classe che ci permette di creare degli oggetti "ruolo" compatibili con questa collection
-        // Quindi passiamo il valore dell'enum a quel costruttore
         return List.of(new SimpleGrantedAuthority(this.ruolo.name()));
-        // return List.of(new SimpleGrantedAuthority("USER"));
     }
 
     @Override

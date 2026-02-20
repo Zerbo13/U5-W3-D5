@@ -25,13 +25,13 @@ public class PrenotazioneController {
         this.prenotazioneService = prenotazioneService;
     }
 
-    @PreAuthorize("hasAnyAuthority('UTENTE')")
+
     @PostMapping
     public Prenotazione salvaPrenotazione(@RequestBody PrenotazionePayload payload) {
         return this.prenotazioneService.salvaPrenotazione(payload);
     }
 
-    @PreAuthorize("hasAnyAuthority('UTENTE')")
+
     @DeleteMapping("/{idPrenotazione}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findByIdAndDelete(@PathVariable UUID idPrenotazione) {
